@@ -94,7 +94,7 @@ export class BoardComponent implements OnInit {
           tileNum: tileCoordinate,
           pawn: pawn,
           color: color,
-          selected: false
+          selected: false,
         };
 
         this.board.push(tileInfo);
@@ -111,15 +111,18 @@ export class BoardComponent implements OnInit {
         }
         else if (tile.selected) { //deselect any other previously selected tile
           tile.selected = false;
-        }
+        } // OBOVE ELSE STATEMENT IS THE PROBLEMATIC ONE
         else if (tile == clickedTile) { //select the clicked tile
           tile.selected = true;
 
+          // select tiles that player is allowed to move to
           this.board.forEach(checkTile => {
-            this.kingMove(checkTile.tileNum).forEach(allowedTile => {
-              if(allowedTile == checkTile.tileNum) {
-                console.log("WORKS");
+            this.kingMove(tile.tileNum).forEach(allowedTile => {
+              // console.log(allowedTile)
+              if (allowedTile == checkTile.tileNum) {
+                // console.log("selected:" + allowedTile);
                 checkTile.selected = true;
+                console.log(checkTile);
               }
             });
           })
