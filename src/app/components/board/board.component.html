@@ -1,0 +1,29 @@
+<div class="grid-container-nums">
+  <div class="grid-item-nums"><p>8</p></div>
+  <div class="grid-item-nums"><p>7</p></div>
+  <div class="grid-item-nums"><p>6</p></div>
+  <div class="grid-item-nums"><p>5</p></div>
+  <div class="grid-item-nums"><p>4</p></div>
+  <div class="grid-item-nums"><p>3</p></div>
+  <div class="grid-item-nums"><p>2</p></div>
+  <div class="grid-item-nums"><p>1</p></div>
+</div>
+
+<div class="grid-container">
+  <!-- <div *ngFor="let tile of board; index as i;" class="grid-item">{{tile.tileNum}}</div> -->
+  <ng-container *ngFor="let tile of board; index as i;">
+    <div *ngIf="tile.selected; else elseBlock" class="grid-item selected" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
+    <ng-template #elseBlock><div class="grid-item" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div></ng-template>
+  </ng-container>
+</div>
+
+<div class="grid-container-letters">
+  <div class="grid-item-letters">a</div>
+  <div class="grid-item-letters">b</div>
+  <div class="grid-item-letters">c</div>
+  <div class="grid-item-letters">d</div>
+  <div class="grid-item-letters">e</div>
+  <div class="grid-item-letters">f</div>
+  <div class="grid-item-letters">g</div>
+  <div class="grid-item-letters">h</div>
+</div>

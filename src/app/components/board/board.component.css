@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  width: 730px;
+  height: 730px;
+}
+
+/* Numbers on left side of board */
+.grid-container-nums {
+  display: inline-grid;
+  grid-template-columns: auto;
+  width: 30px;
+  vertical-align: top
+}
+
+.grid-item-nums {
+  background-color: #e9e9e9;
+  width: 30px;
+  height: 87.5px;
+  font-size: 30px;
+  text-align: center;
+}
+
+.grid-item-nums p {
+  margin-top: 30px;
+  user-select: none;
+  font-size: 25px;
+}
+
+/* Letters on bottom of board */
+.grid-container-letters {
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  float: right;
+}
+
+.grid-item-letters {
+  background-color: #e9e9e9;
+  width: 87.5px;
+  height: 30px;
+  font-size: 30px;
+  text-align: center;
+  user-select: none;
+  font-size: 25px;
+}
+
+/* The board */
+.grid-container {
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+}
+
+.grid-item {
+  background-color: #e9e9e9;
+  width: 87.5px;
+  height: 87.5px;
+  font-size: 30px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Changing the colors of some tiles to be black */
+.grid-item:nth-child(-2n + 8), .grid-item:nth-child(8)~.grid-item:nth-child(-2n + 15), .grid-item:nth-child(16)~.grid-item:nth-child(-2n + 24), .grid-item:nth-child(24)~.grid-item:nth-child(-2n + 31), .grid-item:nth-child(32)~.grid-item:nth-child(-2n + 40), .grid-item:nth-child(40)~.grid-item:nth-child(-2n + 47), .grid-item:nth-child(48)~.grid-item:nth-child(-2n + 56), .grid-item:nth-child(56)~.grid-item:nth-child(-2n + 63) {
+  background-color: #444444;
+  color: #E9E9E9;
+}
+
+.grid-item img {
+  width: 60px;
+  height: 60px;
+  margin-top: 13.75px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.selected{
+  background-color: #758D7E!important;
+  box-shadow:inset 0 0 0 3px #405335;
+}
