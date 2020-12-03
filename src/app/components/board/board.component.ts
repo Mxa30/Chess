@@ -1,7 +1,5 @@
 // import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Component, OnInit } from '@angular/core';
-import { timeEnd } from 'console';
-import { format } from 'path';
 
 @Component({
   selector: 'app-board',
