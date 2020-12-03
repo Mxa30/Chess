@@ -12,8 +12,9 @@
 <div class="grid-container">
   <!-- <div *ngFor="let tile of board; index as i;" class="grid-item">{{tile.tileNum}}</div> -->
   <ng-container *ngFor="let tile of board; index as i;">
-    <div *ngIf="tile.selected; else elseBlock" class="grid-item selected" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
-    <ng-template #elseBlock><div class="grid-item" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div></ng-template>
+    <div *ngIf="tile.selected" class="grid-item selected" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
+    <div *ngIf="tile.highlighted" class="grid-item highlighted" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
+    <div *ngIf="!tile.highlighted && !tile.selected" class="grid-item" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
   </ng-container>
 </div>
 
