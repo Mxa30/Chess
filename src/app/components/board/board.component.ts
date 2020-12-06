@@ -30,6 +30,7 @@ export class BoardComponent implements OnInit {
         var pawn = 'assets/pawns/';
         var color = '';
         var type = '';
+        var moves = 0;
 
         switch (true) {
           // IF TILE IS FOR PAWN
@@ -110,6 +111,7 @@ export class BoardComponent implements OnInit {
           pawn: pawn,
           color: color,
           type: type,
+          moves: moves,
           selected: false,
           highlighted: false
         };
@@ -150,7 +152,15 @@ export class BoardComponent implements OnInit {
             // Check wat voor soort pion is geselecteerd : IF
             // Highlight omliggende tiles waar de pion heen mag : LOOP/NIEUWE FUNCTIE
             // Sla tiles op in een array : ACTIE
-            const allowedMoves = this.kingMove(clickedTile.tileNum);
+
+            switch (clickedTile.type) {
+              case 'pawn':
+                var allowedMoves = this.pawnMove(clickedTile);
+                break;
+              case 'king':
+                var allowedMoves = this.kingMove(clickedTile);
+                break;
+            }
             this.board.forEach(tile => {
               allowedMoves.forEach(allowedTile => {
                 if (allowedTile == tile.tileNum) { tile.highlighted = true; }
@@ -183,10 +193,31 @@ export class BoardComponent implements OnInit {
   }
 
   movePawn(from: any, to: any) {
+    var fromSplit = from.tileNum.split('');
+    var toSplit = to.tileNum.split('');
+    
+    if (Math.abs(fromSplit[0] - toSplit[0]) > 1 && from.type == 'pawn') { // If pawn moves 2 tiles in one move make en passant possible
+      to.en_passant = true;
+      this.board.forEach((tile, index) => {
+        if (tile.tileNum == to.tileNum) {
+          if((this.board[index-1].type == 'pawn' && this.board[index-1].color == 'b') || (this.board[index+1].type == 'pawn' && this.board[index+1].color == 'b')){
+
+            console.log(this.board[index-1].tileNum);
+            console.log(this.board[index+1].tileNum);
+            console.log('en passant possible');
+          }
+        }
+      });
+      
+    }
     to.pawn = from.pawn;
     to.color = from.color;
+    to.type = from.type;
+    to.moves = from.moves + 1
     from.pawn = '';
     from.color = '';
+    from.type = '';
+    from.moves = 0;
 
     from.selected = false;
 
@@ -195,8 +226,8 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  kingMove(currentPos: string) { //TODO: KING CANT BE PLACED WHERE HE CAN BE CAPTURED
-    var splitArray = currentPos.split('');
+  kingMove(currentPos: any) { //TODO: KING CANT BE PLACED WHERE HE CAN BE CAPTURED & CASTLING
+    var splitArray = currentPos.tileNum.split('');
     var allowedTiles: Array<any> = [];
 
     // King may only move one square around it's own tile in any direction
@@ -221,7 +252,6 @@ export class BoardComponent implements OnInit {
       }
     });
     // Bottom
-
     for (let i = -1; i < 2; i++) {
       var y = parseInt(splitArray[0]) - 1;
       var x = this.columns[this.columns.indexOf(splitArray[1]) + i]
@@ -232,6 +262,32 @@ export class BoardComponent implements OnInit {
         }
       });
     }
+    return allowedTiles;
+  }
+
+  pawnMove(currentPos: any) {
+    var splitArray = currentPos.tileNum.split('');
+    var allowedTiles: Array<any> = [];
+    var y = parseInt(splitArray[0]);
+    var x = this.columns[this.columns.indexOf(splitArray[1])]
+
+    var leftDiagonal = y + 1 + this.columns[this.columns.indexOf(splitArray[1]) - 1];
+    var rightDiagonal = y + 1 + this.columns[this.columns.indexOf(splitArray[1]) + 1];
+
+    this.board.forEach((tile,index) => {
+      if (tile.tileNum == y + 1 + x && tile.color == '') { // Pawn may move 1 tile forward if there isn't any other pawn in front of it
+        allowedTiles.push(tile.tileNum);
+      }
+      if (tile.tileNum == y + 2 + x && currentPos.moves < 1 && tile.color != 'w' && this.board[index+8].color == '') { // Pawn may only move 2 tiles foward in their first move
+        allowedTiles.push(tile.tileNum);
+      }
+      if (tile.tileNum == leftDiagonal && tile.color == 'b') { // Pawn may capture other player if it is 1 tile diagional to itself
+        allowedTiles.push(tile.tileNum);
+      }
+      if (tile.tileNum == rightDiagonal && tile.color == 'b') { // Pawn may capture other player if it is 1 tile diagional to itself
+        allowedTiles.push(tile.tileNum);
+      }
+    });
     return allowedTiles;
   }
 }
