@@ -1,3 +1,13 @@
+<div *ngIf="pawnPromoteBoxVisible[0]" class="pawnPromoteBox">
+  <p>Chose pawn</p>
+  <div class="grid-container-promote">
+    <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'queen')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/queen.svg" alt=""></div>
+    <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'knight')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/knight.svg" alt=""></div>
+    <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'rok')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/rok.svg" alt=""></div>
+    <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'bishop')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/bishop.svg" alt=""></div>
+  </div>
+</div>
+
 <div class="grid-container-nums">
   <div class="grid-item-nums"><p>8</p></div>
   <div class="grid-item-nums"><p>7</p></div>
