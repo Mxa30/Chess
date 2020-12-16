@@ -3,7 +3,7 @@
   <div class="grid-container-promote">
     <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'queen')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/queen.svg" alt=""></div>
     <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'knight')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/knight.svg" alt=""></div>
-    <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'rok')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/rok.svg" alt=""></div>
+    <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'rook')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/rook.svg" alt=""></div>
     <div class="grid-item-promote" (click)="pawnPromote(pawnPromoteBoxVisible[2], pawnPromoteBoxVisible[1], 'bishop')"><img src="assets/pawns/{{pawnPromoteBoxVisible[1]}}/bishop.svg" alt=""></div>
   </div>
 </div>
@@ -22,9 +22,9 @@
 <div class="grid-container">
   <!-- <div *ngFor="let tile of board; index as i;" class="grid-item">{{tile.tileNum}}</div> -->
   <ng-container *ngFor="let tile of board; index as i;">
-    <div *ngIf="tile.selected" class="grid-item selected" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
-    <div *ngIf="tile.highlighted" class="grid-item highlighted" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
-    <div *ngIf="!tile.highlighted && !tile.selected" class="grid-item" (click)="selectPawn(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
+    <div *ngIf="tile.selected" class="grid-item selected" (click)="selectTile(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
+    <div *ngIf="tile.highlighted" class="grid-item highlighted" (click)="selectTile(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
+    <div *ngIf="!tile.highlighted && !tile.selected" class="grid-item" (click)="selectTile(tile)">{{tile.tileNum}}<img *ngIf="tile.pawn != ''" src="{{tile.pawn}}" alt=""></div>
   </ng-container>
 </div>
 

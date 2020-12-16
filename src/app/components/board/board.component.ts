@@ -1,6 +1,8 @@
 // import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { unescapeIdentifier } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
+import { timeLog } from 'console';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 @Component({
   selector: 'app-board',
@@ -15,7 +17,7 @@ export class BoardComponent implements OnInit {
     knight: 'knight.svg',
     pawn: 'pawn.svg',
     queen: 'queen.svg',
-    rok: 'rok.svg',
+    rook: 'rook.svg',
   };
 
   columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -27,6 +29,10 @@ export class BoardComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.initializeBoard();
+  }
+
+  initializeBoard() {
     // Push 64 tiles into board (8*8) with coordinates and starting positions
     for (let i = 8; i >= 1; i--) {
       var res = i.toString();
@@ -93,16 +99,16 @@ export class BoardComponent implements OnInit {
             color = "w";
             type = 'knight';
             break;
-          // IF TILE IS FOR ROK
+          // IF TILE IS FOR ROOK
           case (tileCoordinate == '8a' || tileCoordinate == '8h'):
-            pawn = pawn + "black/" + this.pawns.rok;
+            pawn = pawn + "black/" + this.pawns.rook;
             color = "b";
-            type = 'rok';
+            type = 'rook';
             break;
           case (tileCoordinate == '1a' || tileCoordinate == '1h'):
-            pawn = pawn + "white/" + this.pawns.rok;
+            pawn = pawn + "white/" + this.pawns.rook;
             color = "w";
-            type = 'rok';
+            type = 'rook';
             break;
           default:
             pawn = '';
@@ -126,7 +132,7 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  selectPawn(clickedTile: any) { // TODO: RENAME TO selectTile
+  selectTile(clickedTile: any) {
     if (this.getTurn() == clickedTile.color || clickedTile.highlighted || clickedTile.selected) {
       // Event: Er wordt geklikt op een tile "clickedTile : any"
       // Loop door alle tiles en vind welke tile geklikt is
@@ -139,7 +145,7 @@ export class BoardComponent implements OnInit {
           if (clickedTile.highlighted) { // Check of geklikte tile gehightlightet is : Ja?
             this.board.forEach(tile => { // Loop door alle tiles heen en vind geselecteerde tile.
               if (tile.selected) { // Gevonden? : Verplaats geselecteerde tile naar geklikte tile
-                this.movePawn(tile, clickedTile);
+                this.movePiece(tile, clickedTile);
                 clickedTile.color == 'w' ? this.setTurn('b') : this.setTurn('w'); // Change turn
               }
             });
@@ -187,7 +193,7 @@ export class BoardComponent implements OnInit {
 
   }
 
-  movePawn(from: any, to: any) {
+  movePiece(from: any, to: any) {
     var fromSplit = from.tileNum.split('');
     var toSplit = to.tileNum.split('');
 
@@ -281,7 +287,7 @@ export class BoardComponent implements OnInit {
     // Top
     var y = parseInt(splitArray[0]) + 1;
     for (let i = -1; i < 2; i++) {
-      var x = this.columns[this.columns.indexOf(splitArray[1]) + i]
+      var x = this.columns[this.columns.indexOf(splitArray[1]) + i];
       var coordinate = y + x;
       this.board.forEach(tile => {
         if (tile.tileNum == coordinate && tile.color != currentPos.color && coordinate && y > 0 && y < 9) {
@@ -312,18 +318,18 @@ export class BoardComponent implements OnInit {
     return allowedTiles;
   }
 
-  pawnMove(currentPos: any) { //TODO: PAWN CAN CHANGE INTO ANY PIECE WHEN IT REACHES ENEMY BORDER
-    var splitArray = currentPos.tileNum.split('');
+  pawnMove(currentPos: any) {
+    // var splitArray = currentPos.tileNum.split('');
     var allowedTiles: Array<any> = [];
-    var y = parseInt(splitArray[0]);
-    var x = this.columns[this.columns.indexOf(splitArray[1])]
+    var y = parseInt(currentPos.tileNum.split('')[0]);
+    var x = this.columns[this.columns.indexOf(currentPos.tileNum.split('')[1])];
 
     if (currentPos.color == 'w') { // IF WHITE MOVES
-      var leftDiagonal = y + 1 + this.columns[this.columns.indexOf(splitArray[1]) - 1];
-      var rightDiagonal = y + 1 + this.columns[this.columns.indexOf(splitArray[1]) + 1];
+      var leftDiagonal = y + 1 + this.columns[this.columns.indexOf(x) - 1];
+      var rightDiagonal = y + 1 + this.columns[this.columns.indexOf(x) + 1];
     } else { // IF BLACK MOVES
-      var leftDiagonal = y - 1 + this.columns[this.columns.indexOf(splitArray[1]) - 1];
-      var rightDiagonal = y - 1 + this.columns[this.columns.indexOf(splitArray[1]) + 1];
+      var leftDiagonal = y - 1 + this.columns[this.columns.indexOf(x) - 1];
+      var rightDiagonal = y - 1 + this.columns[this.columns.indexOf(x) + 1];
     }
 
     this.board.forEach((tile, index) => {
@@ -365,11 +371,106 @@ export class BoardComponent implements OnInit {
     return allowedTiles;
   }
 
+  rookMove(currentPos: any) {
+    // var splitArray = currentPos.tileNum.split('');
+    var allowedTiles: Array<any> = [];
+    var tilesWithPiece: Array<any> = [];
+
+    var y = parseInt(currentPos.tileNum.split('')[0]);
+    var x = this.columns[this.columns.indexOf(currentPos.tileNum.split('')[1])];
+    var xIndex = this.columns.indexOf(currentPos.tileNum.split('')[1]);
+
+    // Push all horizontal and vertical tiles to allowedTiles
+    this.board.forEach(tile => {
+      var tileY = parseInt(tile.tileNum.split('')[0])
+      var tileX = tile.tileNum.split('')[1]
+      if (tileY == y && tileX != x) {
+        if (tile.color != '') {
+          tilesWithPiece.push(tile.tileNum);
+        }
+        allowedTiles.push(tile.tileNum);
+      }
+      if (tileY != y && tileX == x) {
+        if (tile.color != '') {
+          tilesWithPiece.push(tile.tileNum);
+        }
+        allowedTiles.push(tile.tileNum);
+      }
+    });
+
+    var prevDeviationTop = 8;
+    var closestTop = '';
+
+    var prevDeviationBottom = 8;
+    var closestBottom = '';
+
+    var prevDeviationRight = 8;
+    var closestRight = '';
+
+    var prevDeviationLeft = 8;
+    var closestLeft = '';
+
+    // Find tiles that have pieces closest to the rook so they can be filtered out of the allowedTiles array
+    tilesWithPiece.forEach(tile => {
+      var tileY = parseInt(tile.split('')[0]);
+      var tileX = tile.split('')[1];
+      var tileXIndex = this.columns.indexOf(tile.split('')[1]);
+
+      //Closest top
+      if (tileY - y < prevDeviationTop && tileY - y > 0 && tileX == x) {
+        // console.log(tile + " " + (tileY - y));
+        // console.log(tileY - y < prevDeviationTop);
+        prevDeviationTop = tileY - y;
+        closestTop = tile;
+      }
+
+      //Closest bottom
+      if (y - tileY < prevDeviationBottom && y - tileY > 0 && tileX == x) {
+        // console.log(tile + " " + (y - tileY));
+        // console.log(y - tileY < prevDeviationBottom);
+        prevDeviationBottom = y - tileY;
+        closestBottom = tile;
+      }
+
+      //Closest right
+      if (tileXIndex - xIndex < prevDeviationRight && tileXIndex - xIndex > 0 && tileY == y) {
+        console.log(tile + " " + (tileXIndex - xIndex));
+        console.log(tileXIndex - xIndex < prevDeviationRight);
+        prevDeviationRight = tileXIndex - xIndex;
+        closestRight = tile;
+      }
+
+      //Closest left
+      if (xIndex - tileXIndex < prevDeviationLeft && xIndex - tileXIndex > 0 && tileY == y) {
+        console.log(tile + " " + (xIndex - tileXIndex));
+        console.log(xIndex - tileXIndex < prevDeviationLeft);
+        prevDeviationLeft = xIndex - tileXIndex;
+        closestLeft = tile;
+      }
+    });
+    console.log("Closest to top = %s", closestTop);
+    console.log("Closest to right = %s", closestRight);
+    console.log("Closest to bottom = %s", closestBottom);
+    console.log("Closest to left = %s", closestLeft);
+
+    // var closeTop = parseInt(closestTop.split('')[0]);
+    // allowedTiles.forEach(tile => {
+    //   var tileY = parseInt(tile.split('')[0]);
+    //   var tileX = tile.split('')[1];
+
+    //   if(tileY > closeTop) {
+    //     allowedTiles.splice(allowedTiles.indexOf(tile),1);
+    //     console.log(tile);
+    //   }
+    // });
+    return allowedTiles;
+  }
+
 
   /*
   WHEN:
-  movePawn will call this function when a pawn reaches the opposite side of the board
-  It will be executed after the initial move is done by the movePawn function
+  movePiece will call this function when a pawn reaches the opposite side of the board
+  It will be executed after the initial move is done by the movePiece function
   
   WHAT:
   The function will pop up a box that lets the user decide what piece they want to be.
@@ -408,11 +509,11 @@ export class BoardComponent implements OnInit {
             i++
           }
           break;
-        case 'rok':
+        case 'rook':
           while (goWhile && i < this.board.length) {
             if (this.board[i].tileNum == currentPos.tileNum) {
               this.board[i].type = pieceChoice;
-              this.board[i].pawn = pawn + color + "/" + this.pawns.rok;
+              this.board[i].pawn = pawn + color + "/" + this.pawns.rook;
               goWhile = false;
             }
             i++
@@ -435,7 +536,7 @@ export class BoardComponent implements OnInit {
     this.pawnPromoteBoxVisible = [];
   }
 
-  getAllowedMoves(clickedTile: any){ // Determine what type the clicked tile is and call the corresponding function to give back the allowed moves
+  getAllowedMoves(clickedTile: any) { // Determine what type the clicked tile is and call the corresponding function to give back the allowed moves
     var allowedMoves = [];
     if (clickedTile) {
       switch (clickedTile.type) {
@@ -444,6 +545,9 @@ export class BoardComponent implements OnInit {
           break;
         case 'king':
           allowedMoves = this.kingMove(clickedTile);
+          break;
+        case 'rook':
+          allowedMoves = this.rookMove(clickedTile);
           break;
         default:
           break;
